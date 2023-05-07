@@ -4,8 +4,8 @@ RAID 01 (pay attention to size)
 
 Create two RAID 1 arrays using the raw storage devices:
 
-  sudo mdadm --create --verbose /dev/md0 --level=1 --raid-devices=2 /dev/sda /dev/sdb
-  sudo mdadm --create --verbose /dev/md1 --level=1 --raid-devices=2 /dev/sdc /dev/sdd
+  **sudo mdadm --create --verbose /dev/md0 --level=1 --raid-devices=2 /dev/sda /dev/sdb**
+  **sudo mdadm --create --verbose /dev/md1 --level=1 --raid-devices=2 /dev/sdc /dev/sdd**
 
 Create a RAID 0 array using the RAID 1 arrays as members:
 
