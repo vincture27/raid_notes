@@ -1,36 +1,44 @@
 https://www.digitalocean.com/community/tutorials/how-to-create-raid-arrays-with-mdadm-on-ubuntu-22-04
+To modify the tutorial for creating a RAID 01 setup, you will need to create two RAID 1 arrays first and then create a RAID 0 array using those RAID 1 arrays as members. Here's the adjusted process:
 
-RAID 01 (pay attention to size)
+1. Create two RAID 1 arrays using the raw storage devices:
 
-Create two RAID 1 arrays using the raw storage devices:
+```bash
+sudo mdadm --create --verbose /dev/md0 --level=1 --raid-devices=2 /dev/sda /dev/sdb
+sudo mdadm --create --verbose /dev/md1 --level=1 --raid-devices=2 /dev/sdc /dev/sdd
+```
 
-  --------> sudo mdadm --create --verbose /dev/md0 --level=1 --raid-devices=2 /dev/sda /dev/sdb
-  
-  --------> sudo mdadm --create --verbose /dev/md1 --level=1 --raid-devices=2 /dev/sdc /dev/sdd
+2. Create a RAID 0 array using the RAID 1 arrays as members:
 
-Create a RAID 0 array using the RAID 1 arrays as members:
+```bash
+sudo mdadm --create --verbose /dev/md2 --level=0 --raid-devices=2 /dev/md0 /dev/md1
+```
 
-  --------> sudo mdadm --create --verbose /dev/md2 --level=0 --raid-devices=2 /dev/md0 /dev/md1
+3. Create a filesystem on the RAID 01 array (/dev/md2):
 
-Create a filesystem on the RAID 01 array (/dev/md2):
+```bash
+sudo mkfs.ext4 -F /dev/md2
+```
 
-  --------> sudo mkfs.ext4 -F /dev/md2
+4. Create a mount point and mount the RAID 01 array:
 
-Create a mount point and mount the RAID 01 array:
+```bash
+sudo mkdir -p /mnt/md2
+sudo mount /dev/md2 /mnt/md2
+```
 
-  --------> sudo mkdir -p /mnt/md2
-  
-  --------> sudo mount /dev/md2 /mnt/md2
+5. Save the array layout and update the initramfs:
 
-Save the array layout and update the initramfs:
+```bash
+sudo mdadm --detail --scan | sudo tee -a /etc/mdadm/mdadm.conf
+sudo update-initramfs -u
+```
 
-  --------> sudo mdadm --detail --scan | sudo tee -a /etc/mdadm/mdadm.conf
-  
-  --------> sudo update-initramfs -u
+6. Add the new filesystem mount options to the /etc/fstab file for automatic mounting at boot:
 
-Add the new filesystem mount options to the /etc/fstab file for automatic mounting at boot:
-
-  --------> echo '/dev/md2 /mnt/md2 ext4 defaults,nofail,discard 0 0' | sudo tee -a /etc/fstab
+```bash
+echo '/dev/md2 /mnt/md2 ext4 defaults,nofail,discard 0 0' | sudo tee -a /etc/fstab
+```
 
 Now you have a RAID 01 setup instead of RAID 10. The rest of the tutorial can be followed as is.
 
