@@ -130,6 +130,8 @@ sudo ufw status verbose
 ip addr show
 __________________________________________________________________________
 https://www.howtoforge.com/tutorial/how-to-setup-iscsi-storage-server-on-ubuntu-2004-lts
+host = target
+client = initiator
 
 Here's a brief step-by-step guide for setting up the prerequisites for your iSCSI target and initiator VMs:
 
