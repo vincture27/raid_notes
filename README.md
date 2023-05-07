@@ -129,3 +129,46 @@ Now you have two Ubuntu 22.04 virtual machines with non-root users, UFW firewall
 sudo ufw status verbose
 ip addr show
 __________________________________________________________________________
+https://www.howtoforge.com/tutorial/how-to-setup-iscsi-storage-server-on-ubuntu-2004-lts
+
+Here's a brief step-by-step guide for setting up the prerequisites for your iSCSI target and initiator VMs:
+
+1. **Configure static IP addresses:**
+   - iSCSI target VM:
+     - Open the `/etc/netplan/00-installer-config.yaml` file:
+       ```
+       sudo nano /etc/netplan/00-installer-config.yaml
+       ```
+     - Modify the file to configure the static IP address `192.168.1.10`:
+       ```yaml
+       network:
+         version: 2
+         ethernets:
+           enp0s3:
+             dhcp4: no
+             addresses: [192.168.1.10/24]
+             gateway4: 192.168.1.1
+             nameservers:
+               addresses: [8.8.8.8, 8.8.4.4]
+       ```
+     - Save and exit the file, then apply the changes:
+       ```
+       sudo netplan apply
+       ```
+   - iSCSI initiator VM:
+     - Follow the same steps, but set the IP address to `192.168.1.20` in the configuration file.
+
+2. **Configure root password:**
+   - On both the iSCSI target and initiator VMs, set the root password by running:
+     ```
+     sudo passwd root
+     ```
+   - Enter the desired password when prompted and confirm it.
+
+3. **Create a 1GB external HDD for the iSCSI target VM:**
+   - In VirtualBox, select the iSCSI target VM, and click "Settings."
+   - Go to the "Storage" tab and click the "+" icon to add a new storage device.
+   - Choose "Create a new disk" and select "VDI (VirtualBox Disk Image)" as the format.
+   - Set the size to 1 GB and click "Create."
+
+After completing these steps, you'll have two Ubuntu 20.04 virtual machines configured with the required prerequisites. You can now proceed with the iSCSI target and initiator configuration.
